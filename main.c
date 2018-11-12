@@ -6,7 +6,7 @@
 #define MAXLOOP 3600
 #define MANY 0
 #define FEW 1
-#define RATIO 0.3
+#define SELECTRATIO 0.3
 #define USR_ARR 30.0
 
 double expdev(double);
@@ -54,47 +54,50 @@ int main(int argc, char *argv[]){
       pp_h = &pp2;
       pp_l = &pp1;
     }
-    if(toilet[time] == 1){
-      if(choose_pp() == MANY){
-        if(*pp_h > use_pp){
-          *pp_h -= use_pp;
-        }else{
-        if(*pp_l > use_pp){
-          *pp_l -= (use_pp - *pp_h);
-          *pp_h = 0;
-        }else{
-          *pp_l = 600;
-          *pp_h = 600;
-          oh++;
-        }
-      }
-      }else{
-        if(*pp_l > use_pp){
-          *pp_l -= use_pp;
-        }else{
-          if(*pp_h > use_pp){
-            *pp_h -= (use_pp - *pp_l);
-            *pp_l = 0;
-          }else{
-            *pp_h = 600;
-            *pp_l = 600;
-            oh++;
-          }
-        }
-      }
-    }
+	if(toilet[time] == 1){
+		if(choose_pp() == MANY){
+			if(*pp_h > use_pp){
+				*pp_h -= use_pp;
+			}else{
+				if(*pp_l > use_pp){
+					*pp_l -= (use_pp - *pp_h);
+					*pp_h = 0;
+				}else{
+					*pp_l = 600;
+					*pp_h = 600;
+					oh++;
+				}
+			}
+		}else{
+			if(*pp_l > use_pp){
+				*pp_l -= use_pp;
+			}else{
+				if(*pp_h > use_pp){
+					*pp_h -= (use_pp - *pp_l);
+					*pp_l = 0;
+				}else{
+					*pp_h = 600;
+					*pp_l = 600;
+					oh++;
+				}
+			}
+		}
+	}
 
-    fprintf(fd,"%d %d %d\n", time, pp1, pp2);
+    //fprintf(fd,"%d %d %d\n", time, pp1, pp2);
     time++;
     icln++;
   }
-  fclose(fd);
-  printf("--- R E S U L T ---\n");
-  printf(" MANY: %d\n", many);
-  printf("  FEW: %d\n", few);
-  printf("   Oh: %d\n", oh);
-  printf("RATIO: %1.2f %%\n", (double) oh / (many + few) * 100);
-  return 0;
+
+
+	printf("--- R E S U L T ---\n");
+	printf(" MANY: %d\n", many);
+	printf("  FEW: %d\n", few);
+	printf("   Oh: %d\n", oh);
+	printf("RATIO: %1.2f %%\n", (double) oh / (many + few) * 100);
+
+	fclose(fd);
+	return 0;
 }
 
 double expdev(double ave){
@@ -110,12 +113,12 @@ int choose_pp(void){
 	double x;
 	//srand((unsigned int) time(NULL));
 	x = (float)rand()/(RAND_MAX + 1.0) * 1.0;
-	if (x <= RATIO) {
-    many++;
+	if (x <= SELECTRATIO) {
+    	many++;
 		return MANY;
 	}
-	if (RATIO < x) {
-    few++;
+	if (SELECTRATIO < x) {
+    	few++;
 		return FEW;
 	}
 }
