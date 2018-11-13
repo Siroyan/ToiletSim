@@ -6,7 +6,7 @@
 #define MAXLOOP 3600
 #define MANY 0
 #define FEW 1
-#define RATIO 0.7
+#define RATIO 0.3
 #define USR_ARR 30.0
 
 double expdev(double);
@@ -59,15 +59,15 @@ int main(int argc, char *argv[]){
         if(*pp_h > use_pp){
           *pp_h -= use_pp;
         }else{
-          if(*pp_l > use_pp){
-            *pp_l -= (use_pp - *pp_h);
-            *pp_h = 0;
-          }else{
-            *pp_l = 600;
-            *pp_h = 600;
-            oh++;
-          }
+        if(*pp_l > use_pp){
+          *pp_l -= (use_pp - *pp_h);
+          *pp_h = 0;
+        }else{
+          *pp_l = 600;
+          *pp_h = 600;
+          oh++;
         }
+      }
       }else{
         if(*pp_l > use_pp){
           *pp_l -= use_pp;
@@ -90,9 +90,10 @@ int main(int argc, char *argv[]){
   }
   fclose(fd);
   printf("--- R E S U L T ---\n");
-  printf("MANY: %d\n",many);
-  printf(" FEW: %d\n",few);
-  printf("  Oh: %d\n",oh);
+  printf(" MANY: %d\n", many);
+  printf("  FEW: %d\n", few);
+  printf("   Oh: %d\n", oh);
+  printf("RATIO: %1.2f %%\n", (double) oh / (many + few) * 100);
   return 0;
 }
 
