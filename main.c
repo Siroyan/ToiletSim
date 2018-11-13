@@ -3,9 +3,11 @@
 #include <math.h>
 #include <time.h>
 
-#define MAXLOOP 1000
+#define MAXLOOP 3600
 #define MANY 0
 #define FEW 1
+#define RATIO 0.7
+#define USR_ARR 30.0
 
 double expdev(double);
 int choose_pp(void);
@@ -13,6 +15,7 @@ int choose_pp(void);
 static int toilet[MAXLOOP];
 static int many;
 static int few;
+static int oh;
 
 int main(int argc, char *argv[]){
   int buf;
@@ -24,19 +27,21 @@ int main(int argc, char *argv[]){
   int use_pp = 80;
   int *pp_h, *pp_l;
   int i, itemp, itemp2;
-  double usr_arr = 40.0;
+  int usr_arr;
+  int ratio;
+
   FILE *fd;
 
   fd = fopen("data1.d","w");
   itemp2 = 0;
   do {
-    itemp = (int)(expdev(usr_arr));
+    itemp = (int)(expdev(USR_ARR));
     itemp2 += itemp;
   } while (itemp2 < MAXLOOP && ( toilet[itemp2] = 1 ));
 
   while(time < MAXLOOP){
     //Cleaner set pp.
-    if(icln == 60){
+    if(icln == 120){
       if(pp1 == 0) pp1 = 600;
       if(pp2 == 0) pp2 = 600;
       icln = 0;
@@ -58,9 +63,9 @@ int main(int argc, char *argv[]){
             *pp_l -= (use_pp - *pp_h);
             *pp_h = 0;
           }else{
-            *pp_l = 0;
-            *pp_h = 0;
-            printf("Oh...\n");
+            *pp_l = 600;
+            *pp_h = 600;
+            oh++;
           }
         }
       }else{
@@ -71,39 +76,23 @@ int main(int argc, char *argv[]){
             *pp_h -= (use_pp - *pp_l);
             *pp_l = 0;
           }else{
-            *pp_h = 0;
-            *pp_l = 0;
-            printf("Oh...\n");
+            *pp_h = 600;
+            *pp_l = 600;
+            oh++;
           }
         }
       }
     }
-    /*
-    int i,j;
-    printf("pp1 [");
-    for(i=0;i<pp1;i=i+20){
-      printf("#");
-    }
-    printf("]\n");
-    printf("pp2 [");
-    for(j=0;j<pp2;j=j+20){
-      printf("#");
-    }
-    printf("]\n");
-    */
+
     fprintf(fd,"%d %d %d\n", time, pp1, pp2);
     time++;
     icln++;
-    /*
-    printf("\nNext(Enter) or (Q)uit?");
-    scanf("%c", &buf);
-    if(buf == 'q' || buf == 'Q') break;
-    */
   }
   fclose(fd);
   printf("--- R E S U L T ---\n");
   printf("MANY: %d\n",many);
   printf(" FEW: %d\n",few);
+  printf("  Oh: %d\n",oh);
   return 0;
 }
 
@@ -118,15 +107,13 @@ double expdev(double ave){
 
 int choose_pp(void){
 	double x;
-	srand((unsigned int) time(NULL));
+	//srand((unsigned int) time(NULL));
 	x = (float)rand()/(RAND_MAX + 1.0) * 1.0;
-	if (x <= 0.7) {
-		printf("MANY\n");
+	if (x <= RATIO) {
     many++;
 		return MANY;
 	}
-	if (0.7 < x) {
-		printf("FEW\n");
+	if (RATIO < x) {
     few++;
 		return FEW;
 	}
