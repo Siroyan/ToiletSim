@@ -3,11 +3,11 @@
 #include <math.h>
 #include <time.h>
 
-#define MAXLOOP 3600
+#define MAXLOOP 1000000
 #define MANY 0
 #define FEW 1
 #define USEPP 80
-#define USR_ARR 100.0
+#define USR_ARR 20
 
 double expdev(double);
 int choose_pp(void);
@@ -23,8 +23,11 @@ int main(int argc, char *argv[]){
 	int itemp, itemp2;
 	int time;
 	int cnt = 0;
+	char filename[16];
 	FILE *fd;
-	fd = fopen("data100.d","w");
+
+	sprintf(filename, "cleaner/%s.csv", argv[1]);
+	fd = fopen(filename,"w");
 	while(selectRatio < 1.0){
 		pp1 = 600;
 		pp2 = 600;
@@ -36,7 +39,7 @@ int main(int argc, char *argv[]){
 			itemp2 += itemp;
 		} while (itemp2 < MAXLOOP && ( toilet[itemp2] = 1 ));
 		while(time < MAXLOOP){
-		    if(time % 120 == 0){
+		    if(time % atoi(argv[1]) == 0){
 		    	if(pp1 == 0) pp1 = 600;
 		    	if(pp2 == 0) pp2 = 600;
 		    }
@@ -84,7 +87,7 @@ int main(int argc, char *argv[]){
 		printf(" MANY: %d\n", many);
 		printf("  FEW: %d\n", few);
 		printf("   Oh: %d\n", oh);
-		fprintf(fd, "%f %f\n", selectRatio * 100, (double) oh / (many + few) * 100);
+		fprintf(fd, "%f,%f\n", selectRatio * 100, (double) oh / (many + few) * 100);
 		many = 0;
 		few = 0;
 		oh = 0;
